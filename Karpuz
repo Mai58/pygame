@@ -1,0 +1,58 @@
+import pygame
+import random
+import os
+
+# Pygame'i başlat
+pygame.init()
+
+# Ekran boyutları
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+
+# Renkler
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+
+# Ekranı ayarla
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Karpuz Kesme Oyunu")
+
+# Karpuz resmini yükle
+watermelon_image = pygame.image.load('watermelon.png')
+watermelon_rect = watermelon_image.get_rect()
+
+# Oyun değişkenleri
+watermelons = []
+for i in range(5):
+    x = random.randint(0, SCREEN_WIDTH - watermelon_rect.width)
+    y = random.randint(0, SCREEN_HEIGHT - watermelon_rect.height)
+    watermelons.append(pygame.Rect(x, y, watermelon_rect.width, watermelon_rect.height))
+
+score = 0
+font = pygame.font.SysFont(None, 36)
+
+# Ana oyun döngüsü
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            for watermelon in watermelons:
+                if watermelon.collidepoint(event.pos):
+                    watermelons.remove(watermelon)
+                    score += 1
+
+    screen.fill(WHITE)
+
+    for watermelon in watermelons:
+        screen.blit(watermelon_image, (watermelon.x, watermelon.y))
+
+    score_text = font.render(f"Score: {score}", True, BLACK)
+    screen.blit(score_text, (10, 10))
+
+    pygame.display.flip()
+
+pygame.quit()
